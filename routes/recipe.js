@@ -4,10 +4,10 @@ import recipeControllers from '../controllers/recipe.js';
 
 const router = express.Router();
 router.get('/', recipeControllers.getAllRecipes);
-router.post('/add', recipeControllers.postRecipe);
+router.post('/', recipeControllers.postRecipe);
 router.get('/:id', recipeControllers.getOneRecipe);
-router.put('/update/:id', recipeControllers.updateRecipe);
-router.delete('/delete/:id', recipeControllers.deleteRecipe);
+router.put('/:id', recipeControllers.updateRecipe);
+router.delete('/:id', recipeControllers.deleteRecipe);
 
 // routes
 
