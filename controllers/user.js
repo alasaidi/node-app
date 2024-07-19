@@ -9,10 +9,10 @@ import query from '../config/db.js';
 const userControllers = {
     register: async (req, res) => {
         try {
-            const { username, email, password_hash } = req.body;
+            const { username, email, password } = req.body;
 
             // Validate input
-            if (!username || !email || !password_hash) {
+            if (!username || !email || !password) {
                 return res
                     .status(400)
                     .json({ message: 'All fields are required' });
@@ -24,7 +24,7 @@ const userControllers = {
                     .json({ message: 'Invalid email format' });
             }
 
-            if (!validatePassword(password_hash)) {
+            if (!validatePassword(password)) {
                 return res
                     .status(400)
                     .json({ message: 'Password does not meet requirements' });
@@ -40,12 +40,13 @@ const userControllers = {
             }
 
             // Hash password
-            const hashedPassword = await hashPassword(password_hash);
+            const hashedPassword = await hashPassword(password);
+            // console.log('Hashed password:', hashedPassword);
 
             // Insert new user
             const result = await query(
-                'INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)',
-                [username, email, password_hash]
+                'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
+                [username, email, hashedPassword]
             );
 
             res.status(201).json({
@@ -73,13 +74,20 @@ const userControllers = {
             const users = await query('SELECT * FROM users WHERE email = ?', [
                 email
             ]);
+
             if (users.length === 0) {
                 return res.status(401).json({ message: 'Invalid credentials' });
             }
 
             const user = users[0];
 
+            // console.log('Input password:', password);
+            // console.log('Stored password hash:', user.password);
+            // console.log('Password type:', typeof password);
+            // console.log('Stored hash type:', typeof user.password);
+
             // Check password
+
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) {
                 return res.status(401).json({ message: 'Invalid credentials' });
