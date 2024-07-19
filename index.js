@@ -36,7 +36,7 @@ app.use(express.static(path.join(PATH, 'public')));
 // createRecipeTable();
 
 // use routes
-app.use(userRoutes);
+app.use('/users', userRoutes);
 app.use('/recipes', recipeRoutes);
 
 // error
